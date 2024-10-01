@@ -21,15 +21,15 @@
       </div>
       <div class="calculator-input-row">
         <span>Car MPG:</span>
-        <input placeholder="24" class="js-mpg">
+        <input pattern="[0-9]*" type="text" placeholder="24" class="js-mpg">
       </div>
       <div class="calculator-input-row">
         <span>Distance (MI):</span>
-        <input placeholder="100" class="js-distance">
+        <input pattern="[0-9]*" type="text" placeholder="100" class="js-distance">
       </div>
       <div class="calculator-input-row">
         <span>Gas Price($):</span>
-        <input placeholder="4" class="js-gas-price">
+        <input pattern="[0-9]*" type="text" placeholder="4" class="js-gas-price">
       </div>
 
       <div><button class="js-calculate" onclick="calculateSpeed();">Calculate</button>
