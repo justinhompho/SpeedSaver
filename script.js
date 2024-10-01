@@ -39,8 +39,8 @@ geoFindMe();
 
 // Example usage: Access the global variables after they are set
 setTimeout(() => {
-  console.log("Longitude:", longitude); // Prints the longitude
-  console.log("Latitude:", latitude);   // Prints the latitude
+  console.log("Longitude:", longitude);
+  console.log("Latitude:", latitude);
 }, 2000); // Delay to ensure geolocation callback has time to complete
 
 document.querySelector("#find-me").addEventListener("click", geoFindMe);
@@ -81,7 +81,7 @@ async function displayMaxspeed() {
   const maxSpeed = document.querySelector('#testy');
   // const speed = await getMaxspeed(52.5200, 13.4050);
   // maxSpeed.textContent = speed !== null ? `Maxspeed: ${speed}` : "No maxspeed found";
-  maxSpeed.textContent = `[${longitude}, ${latitude}]`
+  maxSpeed.textContent = latitude
 }
 displayMaxspeed();
 
