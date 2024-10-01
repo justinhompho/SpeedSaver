@@ -12,10 +12,25 @@
 
       <h1>How Fast Should I Speed?</h1>
 
-      <div class="calculator-input-row"><span>Speed Limit:</span> <input placeholder="60" class="js-speed-limit"></div>
-      <div class="calculator-input-row"><span>Car MPG:</span> <input placeholder="24" class="js-mpg"></div>
-      <div class="calculator-input-row"><span>Distance (MI):</span> <input placeholder="100" class="js-distance"></div>
-      <div class="calculator-input-row"><span>Gas Price($):</span> <input placeholder="4" class="js-gas-price"></div>
+      <div class="calculator-input-row">
+        <span>Speed Limit:</span>
+
+        <!-- <input id="jsSpeedLimit" placeholder="">
+        <input id="js-speed-limit" type="range" min="0" max="85" step="5" placeholder="45" /> -->
+        <input pattern="[0-9]*" type="text" class="js-speed-limit" placeholder="60">
+      </div>
+      <div class="calculator-input-row">
+        <span>Car MPG:</span>
+        <input placeholder="24" class="js-mpg">
+      </div>
+      <div class="calculator-input-row">
+        <span>Distance (MI):</span>
+        <input placeholder="100" class="js-distance">
+      </div>
+      <div class="calculator-input-row">
+        <span>Gas Price($):</span>
+        <input placeholder="4" class="js-gas-price">
+      </div>
 
       <div><button class="js-calculate" onclick="calculateSpeed();">Calculate</button>
 

@@ -1,7 +1,19 @@
+
+
+// const speedInput = document.querySelector("#js-speed-limit");
+// const speedLimit = document.getElementById("jsSpeedLimit");
+// speedLimit.placeholder = speedInput.value;
+// speedInput.addEventListener("input", (event) => {
+//   speedLimit.placeholder = event.target.value;
+// });
+
+
 function calculateSpeed() {
 
   resetTable();
+  console.log("hello")
   var speedLimit = Number(document.querySelector('.js-speed-limit').value);
+  console.log("hello2")
   var mpg = Number(document.querySelector('.js-mpg').value);
   var distance = Number(document.querySelector('.js-distance').value);
   var gasPrice = Number(document.querySelector('.js-gas-price').value);
