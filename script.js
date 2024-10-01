@@ -1,6 +1,51 @@
 
 
-// Geo location demo
+// Geo location demo //////////////////////////////////////
+async function getMaxspeed(lat, lon) {
+  // Construct Overpass QL query to find roads with maxspeed near the coordinates
+  const query = `
+    [out:json];
+    way(around:50, ${lat}, ${lon})["maxspeed"];
+    out tags;`;
+
+  // requrest
+  const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    // Check if there are any roads with maxspeed found
+    if (data.elements.length > 0) {
+      // Extract maxspeed values from the response
+      const maxspeeds = data.elements.map(element => element.tags.maxspeed);
+
+      // The api stres speed in an array
+      return maxspeeds[0];
+    } else {
+      console.log("No roads with maxspeed found near the given coordinates.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error querying Overpass API:", error);
+    return null;
+  }
+}
+
+// Example usage: Get maxspeed for coordinates (latitude, longitude)
+async function displayMaxspeed() {
+  const maxSpeed = document.querySelector('#testy');
+  // const speed = await getMaxspeed(52.5200, 13.4050);
+  // maxSpeed.textContent = speed !== null ? `Maxspeed: ${speed}` : "No maxspeed found";
+  maxSpeed.textContent = `[${longitude}, ${latitude}]`
+}
+displayMaxspeed();
+
+
+let longitude;
+let latitude;
+
+
 function geoFindMe() {
   const status = document.querySelector("#status");
   const mapLink = document.querySelector("#map-link");
@@ -9,8 +54,9 @@ function geoFindMe() {
   mapLink.textContent = "";
 
   function success(position) {
-    const latitude = position.coords.latitude;
-    const longitude = position.coords.longitude;
+    // Set global variables
+    latitude = position.coords.latitude;
+    longitude = position.coords.longitude;
 
     status.textContent = "";
     mapLink.href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
@@ -29,9 +75,18 @@ function geoFindMe() {
   }
 }
 
+// Call the function to set global variables
+geoFindMe();
+
+// Example usage: Access the global variables after they are set
+setTimeout(() => {
+  console.log("Longitude:", longitude); // Prints the longitude
+  console.log("Latitude:", latitude);   // Prints the latitude
+}, 2000); // Delay to ensure geolocation callback has time to complete
+
 document.querySelector("#find-me").addEventListener("click", geoFindMe);
 
-
+////////////////////////////////////////////////////////
 
 function calculateSpeed() {
 
