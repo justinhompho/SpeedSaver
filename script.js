@@ -1,47 +1,6 @@
 
 
 // Geo location demo //////////////////////////////////////
-async function getMaxspeed(lat, lon) {
-  // Construct Overpass QL query to find roads with maxspeed near the coordinates
-  const query = `
-    [out:json];
-    way(around:50, ${lat}, ${lon})["maxspeed"];
-    out tags;`;
-
-  // requrest
-  const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
-
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-
-    // Check if there are any roads with maxspeed found
-    if (data.elements.length > 0) {
-      // Extract maxspeed values from the response
-      const maxspeeds = data.elements.map(element => element.tags.maxspeed);
-
-      // The api stres speed in an array
-      return maxspeeds[0];
-    } else {
-      console.log("No roads with maxspeed found near the given coordinates.");
-      return null;
-    }
-  } catch (error) {
-    console.error("Error querying Overpass API:", error);
-    return null;
-  }
-}
-
-// Example usage: Get maxspeed for coordinates (latitude, longitude)
-async function displayMaxspeed() {
-  const maxSpeed = document.querySelector('#testy');
-  // const speed = await getMaxspeed(52.5200, 13.4050);
-  // maxSpeed.textContent = speed !== null ? `Maxspeed: ${speed}` : "No maxspeed found";
-  maxSpeed.textContent = `[${longitude}, ${latitude}]`
-}
-displayMaxspeed();
-
-
 let longitude;
 let latitude;
 
@@ -85,6 +44,47 @@ setTimeout(() => {
 }, 2000); // Delay to ensure geolocation callback has time to complete
 
 document.querySelector("#find-me").addEventListener("click", geoFindMe);
+
+async function getMaxspeed(lat, lon) {
+  // Construct Overpass QL query to find roads with maxspeed near the coordinates
+  const query = `
+    [out:json];
+    way(around:50, ${lat}, ${lon})["maxspeed"];
+    out tags;`;
+
+  // requrest
+  const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    // Check if there are any roads with maxspeed found
+    if (data.elements.length > 0) {
+      // Extract maxspeed values from the response
+      const maxspeeds = data.elements.map(element => element.tags.maxspeed);
+
+      // The api stres speed in an array
+      return maxspeeds[0];
+    } else {
+      console.log("No roads with maxspeed found near the given coordinates.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error querying Overpass API:", error);
+    return null;
+  }
+}
+
+// Example usage: Get maxspeed for coordinates (latitude, longitude)
+async function displayMaxspeed() {
+  const maxSpeed = document.querySelector('#testy');
+  // const speed = await getMaxspeed(52.5200, 13.4050);
+  // maxSpeed.textContent = speed !== null ? `Maxspeed: ${speed}` : "No maxspeed found";
+  maxSpeed.textContent = `[${longitude}, ${latitude}]`
+}
+displayMaxspeed();
+
 
 ////////////////////////////////////////////////////////
 
