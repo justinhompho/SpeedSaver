@@ -9,26 +9,29 @@ function geoFindMe() {
   const status = document.querySelector("#status");
   const mapLink = document.querySelector("#map-link");
 
-  mapLink.href = "";
-  mapLink.textContent = "";
+  // mapLink.href = "";
+  // mapLink.textContent = "";
 
   function success(position) {
-    // Set global variables
     latitude = position.coords.latitude;
     longitude = position.coords.longitude;
-    status.textContent = "";
-    mapLink.href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
-    mapLink.textContent = `Latitude: ${latitude} °, Longitude: ${longitude} °`;
+    console.log(`Latitude: ${latitude} °, Longitude: ${longitude} °`)
+    // status.textContent = "";
+    // mapLink.href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
+    // mapLink.textContent = `Latitude: ${latitude} °, Longitude: ${longitude} °`;
   }
 
   function error() {
-    status.textContent = "Unable to retrieve your location";
+    // status.textContent = "Unable to retrieve your location";
+    console.log("Unable to retrieve your location");
   }
 
   if (!navigator.geolocation) {
-    status.textContent = "Geolocation is not supported by your browser";
+    // status.textContent = "Geolocation is not supported by your browser";
+    console.log("Geolocation is not supported by your browser");
   } else {
-    status.textContent = "Locating…";
+    // status.textContent = "Locating…";
+    console.log("locating...");
     navigator.geolocation.getCurrentPosition(success, error);
   }
 }
@@ -48,10 +51,8 @@ async function getMaxspeed(lat, lon) {
   // Construct Overpass QL query to find roads with maxspeed near the coordinates
   const query = `
     [out:json];
-    way(around:50, ${lat}, ${lon})["maxspeed"];
+    way(around:500, ${lat}, ${lon})["maxspeed"];
     out tags;`;
-
-  // requrest
   const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
 
   try {
@@ -88,6 +89,9 @@ async function displayMaxspeed() {
 
 setTimeout(() => {
   displayMaxspeed();
+  // const output = document.querySelector('#testy');
+  // output.textContent = "hello today is 10/15/24"
+  // output.textContent = `longitude: ${longitude}`;
 }, 2000);
 
 // Example usage: Access the global variables after they are set
