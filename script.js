@@ -16,7 +16,6 @@ function geoFindMe() {
     // Set global variables
     latitude = position.coords.latitude;
     longitude = position.coords.longitude;
-
     status.textContent = "";
     mapLink.href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
     mapLink.textContent = `Latitude: ${latitude} °, Longitude: ${longitude} °`;
@@ -76,14 +75,26 @@ async function getMaxspeed(lat, lon) {
   }
 }
 
+let maxSpeedFound;
 // Example usage: Get maxspeed for coordinates (latitude, longitude)
 async function displayMaxspeed() {
   const maxSpeed = document.querySelector('#testy');
-  // const speed = await getMaxspeed(52.5200, 13.4050);
-  // maxSpeed.textContent = speed !== null ? `Maxspeed: ${speed}` : "No maxspeed found";
-  maxSpeed.textContent = latitude
+  const speed = await getMaxspeed(latitude, longitude);
+  maxSpeed.textContent = speed !== null ? `Maxspeed: ${speed}` : "No maxspeed found";
+  maxSpeedFound = speed;
+  console.log("Maxspeed:", maxSpeedFound);
+
 }
-displayMaxspeed();
+
+setTimeout(() => {
+  displayMaxspeed();
+}, 2000);
+
+// Example usage: Access the global variables after they are set
+setTimeout(() => {
+  console.log("Longitude 2:", longitude);
+  console.log("Latitude 2:", latitude);
+}, 2000); // Delay to ensure geolocation callback has time to complete
 
 
 ////////////////////////////////////////////////////////
