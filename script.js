@@ -1,54 +1,28 @@
-
-
-// Geo location demo //////////////////////////////////////
 let longitude;
 let latitude;
 
-
-function geoFindMe() {
-  const status = document.querySelector("#status");
-  const mapLink = document.querySelector("#map-link");
-
-  // mapLink.href = "";
-  // mapLink.textContent = "";
-
+function getCoords() {
   function success(position) {
     latitude = position.coords.latitude;
     longitude = position.coords.longitude;
     console.log(`Latitude: ${latitude} °, Longitude: ${longitude} °`)
-    // status.textContent = "";
-    // mapLink.href = `https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`;
-    // mapLink.textContent = `Latitude: ${latitude} °, Longitude: ${longitude} °`;
+    console.log(`https://www.openstreetmap.org/#map=18/${latitude}/${longitude}`);
   }
 
   function error() {
-    // status.textContent = "Unable to retrieve your location";
     console.log("Unable to retrieve your location");
   }
 
-  if (!navigator.geolocation) {
-    // status.textContent = "Geolocation is not supported by your browser";
+  if (!navigator.geolocation)
     console.log("Geolocation is not supported by your browser");
-  } else {
-    // status.textContent = "Locating…";
-    console.log("locating...");
-    navigator.geolocation.getCurrentPosition(success, error);
-  }
+
+  navigator.geolocation.getCurrentPosition(success, error);
 }
-
 // Call the function to set global variables
-geoFindMe();
-
-// Example usage: Access the global variables after they are set
-setTimeout(() => {
-  console.log("Longitude:", longitude);
-  console.log("Latitude:", latitude);
-}, 2000); // Delay to ensure geolocation callback has time to complete
-
-document.querySelector("#find-me").addEventListener("click", geoFindMe);
+getCoords();
 
 async function getMaxspeed(lat, lon) {
-  // Construct Overpass QL query to find roads with maxspeed near the coordinates
+  //create query
   const query = `
     [out:json];
     way(around:500, ${lat}, ${lon})["maxspeed"];
@@ -59,13 +33,12 @@ async function getMaxspeed(lat, lon) {
     const response = await fetch(url);
     const data = await response.json();
 
-    // Check if there are any roads with maxspeed found
+    //query creates a list of nodes that contain "maxspeed", then shows the information of each nodes
     if (data.elements.length > 0) {
       // Extract maxspeed values from the response
       const maxspeeds = data.elements.map(element => element.tags.maxspeed);
-
-      // The api stres speed in an array
-      return maxspeeds[0];
+      //return closest road's speed
+      return parseInt(maxspeeds[0]);
     } else {
       console.log("No roads with maxspeed found near the given coordinates.");
       return null;
@@ -83,22 +56,13 @@ async function displayMaxspeed() {
   const speed = await getMaxspeed(latitude, longitude);
   maxSpeed.textContent = speed !== null ? `Maxspeed: ${speed}` : "No maxspeed found";
   maxSpeedFound = speed;
-  console.log("Maxspeed:", maxSpeedFound);
-
+  console.log("Maxspeed of nearest road:", maxSpeedFound);
 }
 
 setTimeout(() => {
   displayMaxspeed();
-  // const output = document.querySelector('#testy');
-  // output.textContent = "hello today is 10/15/24"
-  // output.textContent = `longitude: ${longitude}`;
 }, 2000);
 
-// Example usage: Access the global variables after they are set
-setTimeout(() => {
-  console.log("Longitude 2:", longitude);
-  console.log("Latitude 2:", latitude);
-}, 2000); // Delay to ensure geolocation callback has time to complete
 
 
 ////////////////////////////////////////////////////////
