@@ -63,6 +63,132 @@ setTimeout(() => {
   displayMaxspeed();
 }, 2000);
 
+async function getState() {
+  const query = `
+  [out:json];
+  is_in(${latitude}, ${longitude}); 
+  rel(pivot)["admin_level"="4"]; // admin_level=4 corresponds to states/provinces
+  out tags;
+  `
+  const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.elements.length > 0) {
+      // const maxspeeds = data.elements.map(element => element.tags.maxspeed);
+      // return parseInt(maxspeeds[0]);
+
+      const state = data.elements.map(element => element.tags.ref);
+      console.log(`State: ${state[0]}`);
+      return state;
+    } else {
+      console.log("No State found near the given coordinates.");
+      return null;
+    }
+  }
+  catch (error) {
+    console.error("Error querying Overpass API:", error);
+    return null;
+  }
+}
+
+setTimeout(() => {
+  const state = getState(latitude, longitude);
+}, 2500);
+
+async function getGasPrice(state) {
+
+}
+
+async function getGasPrice(stateAbbreviation) {
+  const API_KEY = 'SBL8FuySMGmemcSEhDHsluy0ywwSqIjNFKWwYc1U';  // Replace with your actual EIA API key
+  const stateCodes = {
+    'AL': 'ALA',
+    'AK': 'ALA',
+    'AZ': 'ARIZ',
+    'AR': 'ARK',
+    'CA': 'CAL',
+    'CO': 'COL',
+    'CT': 'CON',
+    'DE': 'DEL',
+    'FL': 'FLA',
+    'GA': 'GEOR',
+    'HI': 'HAWA',
+    'ID': 'IDAH',
+    'IL': 'ILL',
+    'IN': 'IND',
+    'IA': 'IOWA',
+    'KS': 'KAN',
+    'KY': 'KY',
+    'LA': 'LA',
+    'ME': 'MAIN',
+    'MD': 'MD',
+    'MA': 'MAS',
+    'MI': 'MICH',
+    'MN': 'MIN',
+    'MS': 'MISS',
+    'MO': 'MO',
+    'MT': 'MONT',
+    'NE': 'NEB',
+    'NV': 'NEV',
+    'NH': 'NHA',
+    'NJ': 'NJA',
+    'NM': 'NMA',
+    'NY': 'NY',
+    'NC': 'NCA',
+    'ND': 'NDA',
+    'OH': 'OHI',
+    'OK': 'OK',
+    'OR': 'ORE',
+    'PA': 'PENN',
+    'RI': 'RHOD',
+    'SC': 'SCA',
+    'SD': 'SDA',
+    'TN': 'TEN',
+    'TX': 'TEX',
+    'UT': 'UTA',
+    'VT': 'VERM',
+    'VA': 'VIRG',
+    'WA': 'WASH',
+    'WV': 'WVA',
+    'WI': 'WIS',
+    'WY': 'WYO',
+  };
+
+  // Get the EIA series ID for the state
+  const seriesId = `PET.EMM_EPM0D_PTE_${stateCodes[stateAbbreviation] || 'NUS'}_DMC`;
+  const url = `https://api.eia.gov/v2/electricity/retail-sales/data?api_key=${API_KEY}`;
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.series && data.series.length > 0) {
+      const latestData = data.series[0].data[0];  // Get the latest data point
+      console.log(latestData);
+      return {
+        date: latestData[0],
+        price: latestData[1]
+      };
+    } else {
+      throw new Error('No data found for the specified state.');
+    }
+  } catch (error) {
+    console.error('Error fetching gas prices:', error);
+    return null;
+  }
+}
+
+// Example usage:
+getGasPrice('IL').then(gasPrice => {
+  if (gasPrice) {
+    console.log(`Gas price in California on ${gasPrice.date}: $${gasPrice.price}`);
+  }
+});
+
+
 
 
 ////////////////////////////////////////////////////////
@@ -79,9 +205,9 @@ function calculateSpeed() {
   if (!speedLimit)
     speedLimit = 60;
   if (!mpg)
-    mpg = 30;
+    mpg = 24;
   if (!distance)
-    distance = 100;
+    distance = 50;
   if (!gasPrice)
     gasPrice = 4;
 
