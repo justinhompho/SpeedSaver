@@ -103,82 +103,28 @@ async function getGasPrice(state) {
 }
 
 async function getGasPrice(stateAbbreviation) {
-  const API_KEY = 'SBL8FuySMGmemcSEhDHsluy0ywwSqIjNFKWwYc1U';  // Replace with your actual EIA API key
-  const stateCodes = {
-    'AL': 'ALA',
-    'AK': 'ALA',
-    'AZ': 'ARIZ',
-    'AR': 'ARK',
-    'CA': 'CAL',
-    'CO': 'COL',
-    'CT': 'CON',
-    'DE': 'DEL',
-    'FL': 'FLA',
-    'GA': 'GEOR',
-    'HI': 'HAWA',
-    'ID': 'IDAH',
-    'IL': 'ILL',
-    'IN': 'IND',
-    'IA': 'IOWA',
-    'KS': 'KAN',
-    'KY': 'KY',
-    'LA': 'LA',
-    'ME': 'MAIN',
-    'MD': 'MD',
-    'MA': 'MAS',
-    'MI': 'MICH',
-    'MN': 'MIN',
-    'MS': 'MISS',
-    'MO': 'MO',
-    'MT': 'MONT',
-    'NE': 'NEB',
-    'NV': 'NEV',
-    'NH': 'NHA',
-    'NJ': 'NJA',
-    'NM': 'NMA',
-    'NY': 'NY',
-    'NC': 'NCA',
-    'ND': 'NDA',
-    'OH': 'OHI',
-    'OK': 'OK',
-    'OR': 'ORE',
-    'PA': 'PENN',
-    'RI': 'RHOD',
-    'SC': 'SCA',
-    'SD': 'SDA',
-    'TN': 'TEN',
-    'TX': 'TEX',
-    'UT': 'UTA',
-    'VT': 'VERM',
-    'VA': 'VIRG',
-    'WA': 'WASH',
-    'WV': 'WVA',
-    'WI': 'WIS',
-    'WY': 'WYO',
+  const xhr = new XMLHttpRequest();
+
+  const url = `https://www.gasbuddy.com/usa`
+
+  xhr.open('GET', url, true);
+
+  // Set up a function to handle the response
+  xhr.onload = function () {
+    if (xhr.status >= 200 && xhr.status < 300) {
+      // Get the response as text (HTML string)
+      const htmlString = xhr.responseText;
+      console.log(htmlString); // Log the HTML string
+    } else {
+      console.error('Request failed with status:', xhr.status);
+    }
   };
 
-  // Get the EIA series ID for the state
-  const seriesId = `PET.EMM_EPM0D_PTE_${stateCodes[stateAbbreviation] || 'NUS'}_DMC`;
-  const url = `https://api.eia.gov/v2/electricity/retail-sales/data?api_key=${API_KEY}`;
+  xhr.onerror = function () {
+    console.error('Request failed');
+  };
 
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
-
-    if (data.series && data.series.length > 0) {
-      const latestData = data.series[0].data[0];  // Get the latest data point
-      console.log(latestData);
-      return {
-        date: latestData[0],
-        price: latestData[1]
-      };
-    } else {
-      throw new Error('No data found for the specified state.');
-    }
-  } catch (error) {
-    console.error('Error fetching gas prices:', error);
-    return null;
-  }
+  xhr.send();
 }
 
 // Example usage:
