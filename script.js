@@ -21,11 +21,12 @@ function getCoords() {
 // Call the function to set global variables
 getCoords();
 
-async function getMaxspeed(lat, lon) {
-  //create query
+// Uses the OverPassAPI
+let localMaxSpeed;
+async function getMaxSpeed(lat, lon) {
   const query = `
     [out:json];
-    way(around:500, ${lat}, ${lon})["maxspeed"];
+    way(around:1000, ${lat}, ${lon})["maxspeed"];
     out tags;`;
   const url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`;
 
@@ -49,20 +50,13 @@ async function getMaxspeed(lat, lon) {
   }
 }
 
-let maxSpeedFound;
-// Example usage: Get maxspeed for coordinates (latitude, longitude)
-async function displayMaxspeed() {
-  const maxSpeed = document.querySelector('#testy');
-  const speed = await getMaxspeed(latitude, longitude);
-  maxSpeed.textContent = speed !== null ? `Maxspeed: ${speed}` : "No maxspeed found";
-  maxSpeedFound = speed;
-  console.log("Maxspeed of nearest road:", maxSpeedFound);
-}
+setTimeout(async () => {
+  localMaxSpeed = await getMaxSpeed(latitude, longitude);
+  console.log(`Nearest Max Speed: ${localMaxSpeed} mph`);
+}, 1000);
 
-setTimeout(() => {
-  displayMaxspeed();
-}, 2000);
-
+// Uses the OverPassAPI
+let localState;
 async function getState() {
   const query = `
   [out:json];
@@ -81,7 +75,7 @@ async function getState() {
       // return parseInt(maxspeeds[0]);
 
       const state = data.elements.map(element => element.tags.ref);
-      console.log(`State: ${state[0]}`);
+      // console.log(`State: ${state[0]}`);
       return state;
     } else {
       console.log("No State found near the given coordinates.");
@@ -93,49 +87,60 @@ async function getState() {
     return null;
   }
 }
+setTimeout(async () => {
+  localState = await getState(latitude, longitude);
+}, 1000);
 
-setTimeout(() => {
-  const state = getState(latitude, longitude);
-}, 2500);
-
+// Uses Webscraping method and scraperAPI.com's free proxy to access AAA's HTML
+let localGasPrice;
 async function getGasPrice(state) {
+  const apiKey = "d96bde3b6bd8b607b197f7f92d562377"
+  const targetUrl = `https://gasprices.aaa.com/?state=${state}`;
+  const proxyUrl = `http://api.scraperapi.com?api_key=${apiKey}&url=${encodeURIComponent(targetUrl)}`;
 
-}
+  try {
+    const response = await fetch(proxyUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+    });
 
-async function getGasPrice(stateAbbreviation) {
-  const xhr = new XMLHttpRequest();
-
-  const url = `https://www.gasbuddy.com/usa`
-
-  xhr.open('GET', url, true);
-
-  // Set up a function to handle the response
-  xhr.onload = function () {
-    if (xhr.status >= 200 && xhr.status < 300) {
-      // Get the response as text (HTML string)
-      const htmlString = xhr.responseText;
-      console.log(htmlString); // Log the HTML string
-    } else {
-      console.error('Request failed with status:', xhr.status);
+    if (!response.ok) {
+      throw new Error(`Network response was not ok: ${response.statusText}`);
     }
-  };
 
-  xhr.onerror = function () {
-    console.error('Request failed');
-  };
+    const data = await response.text();
+    // console.log(data);
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(data, "text/html");
+    const table = doc.querySelector(".table-mob");
 
-  xhr.send();
-}
+    if (!table) {
+      throw new Error('Table with ID "table-mob" not found.');
+    }
+    const tbody = table.querySelector('tbody');
+    if (!tbody) {
+      throw new Error('No <tbody> found inside the table.');
+    }
+    const firstRow = tbody.querySelector('tr');
+    if (!firstRow) {
+      throw new Error('No rows found in the <tbody>.');
+    }
+    const cell2 = firstRow.querySelectorAll('td')[1];
+    if (!cell2) {
+      throw new Error('Cell 2 not found in the first row.');
+    }
+    // console.log(cell2.textContent);
+    return cell2.textContent;
 
-// Example usage:
-getGasPrice('IL').then(gasPrice => {
-  if (gasPrice) {
-    console.log(`Gas price in California on ${gasPrice.date}: $${gasPrice.price}`);
+  } catch (error) {
+    console.error('Error fetching gas prices:', error);
   }
-});
-
-
-
+}
+setTimeout(async () => {
+  localGasPrice = await getGasPrice('IL');
+  console.log(`Gas Price in IL: ${localGasPrice}`);
+}, 1000);
 
 ////////////////////////////////////////////////////////
 
