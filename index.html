@@ -12,8 +12,6 @@
 
       <h1>How Fast Should I Speed?</h1>
 
-      <p id="testy">I am testy!</p>
-
 
       <div class="calculator-input-row">
         <span>Speed Limit:</span>
@@ -32,9 +30,12 @@
         <input pattern="[0-9]*" type="text" placeholder="4" class="js-gas-price">
       </div>
 
-      <div><button class="js-calculate" onclick="calculateSpeed();">Calculate</button>
-
+      <div><button class="js-calculate" onclick="manualCalculateSpeed();">Calculate</button>
       </div>
+
+      <h2>or</h2>
+
+      <button class="js-local-calculate" onclick="localCalculateSpeed()">Estimate Current Trip</button>
 
       <table class="calculator-output js-calculator-output">
         <tr></tr> <!-- must keep, else table header will duplicate when pressing "calculate" twice-->

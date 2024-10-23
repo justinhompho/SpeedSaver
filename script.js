@@ -144,13 +144,27 @@ setTimeout(async () => {
 
 ////////////////////////////////////////////////////////
 
-function calculateSpeed() {
+function manualCalculateSpeed() {
+  let ManualSpeedLimit = Number(document.querySelector('.js-speed-limit').value);
+  let ManualMpg = Number(document.querySelector('.js-mpg').value);
+  let ManualDistance = Number(document.querySelector('.js-distance').value);
+  let ManualGasPrice = Number(document.querySelector('.js-gas-price').value);
+  calculateSpeed(ManualSpeedLimit, ManualMpg, ManualDistance, ManualGasPrice);
+}
 
+function localCalculateSpeed() {
+  let ManualMpg = Number(document.querySelector('.js-mpg').value);
+  let ManualDistance = Number(document.querySelector('.js-distance').value);
+
+  setTimeout(async () => { ///////////////left off here 10/22
+    localMaxSpeed = getMaxSpeed(latitude, longitude)
+    localState = await getState(latitude, longitude);
+    localGasPrice = getGasPrice(localState);
+  }, 1000);
+  calculateSpeed(localMaxSpeed, ManualMpg, ManualDistance, localGasPrice);
+}
+function calculateSpeed(speedLimit, mpg, distance, gasPrice) {
   resetTable();
-  var speedLimit = Number(document.querySelector('.js-speed-limit').value);
-  var mpg = Number(document.querySelector('.js-mpg').value);
-  var distance = Number(document.querySelector('.js-distance').value);
-  var gasPrice = Number(document.querySelector('.js-gas-price').value);
 
   //placeholder values
   if (!speedLimit)
@@ -171,6 +185,7 @@ function calculateSpeed() {
   const tmpg = header.insertCell(2);
   const tcost = header.insertCell(3);
 
+
   tspeed.innerHTML = 'Speed';
   ttime.innerHTML = 'Travel Time';
   tmpg.innerHTML = 'Estimate MPG';
@@ -184,6 +199,7 @@ function calculateSpeed() {
     var newMPG = row.insertCell(2);
     var newCost = row.insertCell(3);
 
+    console.log("hello"); //////////////////////////////LEFT OFF HERE 10/22
     newSpeed.innerHTML = speed;
     newTime.innerHTML = hoursToMins(distance / speed);
     newMPG.innerHTML = trunc(calculateMPG(mpg, speed));
